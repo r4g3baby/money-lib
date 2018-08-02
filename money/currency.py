@@ -1112,7 +1112,7 @@ class Currency:
         if currency_code not in self.CURRENCIES:
             raise ValueError('Unknown currency code %s.' % currency_code)
 
-        self.currency_code = currency_code
+        self._currency_code = currency_code
 
     @classmethod
     def add_currency(cls, currency_code: str, display_name: str, numeric_code: int, digits: int, sub_unit: int):
@@ -1139,6 +1139,12 @@ class Currency:
             'default_fraction_digits': digits,
             'sub_unit': sub_unit
         }
+
+    @property
+    def currency_code(self) -> str:
+        """Returns the ISO 4217 code of this currency."""
+
+        return self._currency_code
 
     @property
     def display_name(self) -> str:
