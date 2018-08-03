@@ -4,7 +4,7 @@ class Currency:
 
     Parameters
     ----------
-    currency_code : str
+    currency_code: str
         The ISO 4217 code of the currency
 
     Raises
@@ -1109,7 +1109,7 @@ class Currency:
     def __init__(self, currency_code: str):
         currency_code = currency_code.upper()
 
-        if currency_code not in self.CURRENCIES:
+        if currency_code not in Currency.CURRENCIES:
             raise ValueError('Unknown currency code %s.' % currency_code)
 
         self._currency_code = currency_code
@@ -1150,25 +1150,25 @@ class Currency:
     def display_name(self) -> str:
         """Returns the name that is suitable for displaying this currency."""
 
-        return self.CURRENCIES[self.currency_code]['display_name']
+        return Currency.CURRENCIES[self.currency_code]['display_name']
 
     @property
     def numeric_code(self) -> int:
         """Returns the ISO 4217 numeric code of this currency."""
 
-        return self.CURRENCIES[self.currency_code]['numeric_code']
+        return Currency.CURRENCIES[self.currency_code]['numeric_code']
 
     @property
     def default_fraction_digits(self) -> int:
         """Returns the default number of fraction digits used with this currency."""
 
-        return self.CURRENCIES[self.currency_code]['default_fraction_digits']
+        return Currency.CURRENCIES[self.currency_code]['default_fraction_digits']
 
     @property
     def sub_unit(self) -> int:
         """Returns the sub unit of this currency."""
 
-        return self.CURRENCIES[self.currency_code]['sub_unit']
+        return Currency.CURRENCIES[self.currency_code]['sub_unit']
 
     def __str__(self):
         return self.currency_code
