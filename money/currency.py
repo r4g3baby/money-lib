@@ -1110,10 +1110,14 @@ class Currency:
     """
 
     def __init__(self, currency_code: str):
-        currency_code = currency_code.upper()
-
         if currency_code not in Currency.CURRENCIES:
-            raise UnknownCurrencyCode(currency_code)
+            try:
+                currency_code = currency_code.upper()
+            except AttributeError:
+                pass
+
+            if currency_code not in Currency.CURRENCIES:
+                raise UnknownCurrencyCode(currency_code)
 
         self._currency_code = currency_code
 
