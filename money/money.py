@@ -5,7 +5,8 @@ from typing import Union
 from babel.numbers import format_currency
 
 from money.currency import Currency
-from money.exceptions import InvalidOperandType, InvalidAmount
+from money.exceptions import InvalidOperandType, InvalidAmount, ExchangeBackendNotSet, ExchangeRateNotFound
+from money.exchange import xrates
 
 DecimalRoundingModes = Union[
     ROUND_DOWN,
@@ -199,9 +200,17 @@ class Money:
         if currency == self._currency:
             return self
 
-        # TODO implement exchange rates
+        if xrates.backend is None:
+            raise ExchangeBackendNotSet()
 
-        return self.__class__(self._amount, currency)
+        origin = self._currency.currency_code
+        target = currency.currency_code
+
+        rate = xrates.backend.quotation(origin, target)
+        if rate is None:
+            raise ExchangeRateNotFound(xrates.backend_name, origin, origin)
+
+        return self.__class__(self._amount * rate, currency)
 
     def format(self, locale: str = 'en_US') -> str:
         """Returns a string of the currency formatted for the specified locale."""
