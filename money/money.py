@@ -57,13 +57,9 @@ class Money:
         return hash((self._amount, self._currency))
 
     def __repr__(self):
-        if self._currency is None:
-            return str(self._amount)
         return '{} {}'.format(self._currency, self.amount)
 
     def __str__(self):
-        if self._currency is None:
-            return str(self._amount)
         return '{} {}'.format(self._currency, self.amount)
 
     def __lt__(self, other):
