@@ -1,11 +1,11 @@
-from decimal import Decimal, ROUND_DOWN, ROUND_HALF_UP, ROUND_HALF_EVEN, ROUND_CEILING, ROUND_FLOOR, ROUND_UP, \
-    ROUND_HALF_DOWN, ROUND_05UP
+from decimal import Decimal, InvalidOperation, ROUND_DOWN, ROUND_HALF_UP, ROUND_HALF_EVEN, ROUND_CEILING, ROUND_FLOOR, \
+    ROUND_UP, ROUND_HALF_DOWN, ROUND_05UP
 from typing import Union
 
 from babel.numbers import format_currency
 
 from money.currency import Currency
-from money.exceptions import InvalidOperandType
+from money.exceptions import InvalidOperandType, InvalidAmount
 
 DecimalRoundingModes = Union[
     ROUND_DOWN,
@@ -24,11 +24,15 @@ class Money:
 
     _rounding_mode = ROUND_HALF_UP
 
-    def __init__(self, amount, currency=None):
-        if not isinstance(currency, Currency) and currency is not None:
+    def __init__(self, amount, currency):
+        if not isinstance(currency, Currency):
             currency = Currency(str(currency))
 
-        self._amount = Decimal(amount)
+        try:
+            self._amount = Decimal(amount)
+        except InvalidOperation:
+            raise InvalidAmount(amount)
+
         self._currency = currency
 
     @property
@@ -209,9 +213,6 @@ class Money:
         return format_currency(self._amount, self.currency.currency_code, locale=locale)
 
     def _round(self) -> Decimal:
-        if self._currency is None:
-            return self._amount
-
         sub_units = Decimal(str(1 / self._currency.sub_unit).rstrip('0'))
         sub_units_rounded = self._amount.quantize(sub_units, rounding=Money._rounding_mode)
 

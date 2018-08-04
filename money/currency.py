@@ -1,3 +1,6 @@
+from money.exceptions import UnknownCurrencyCode
+
+
 class Currency:
     """
     Represents a currency identified by its ISO 4217 code.
@@ -9,8 +12,8 @@ class Currency:
 
     Raises
     ------
-    ValueError
-        If the given currency code isn't supported
+    UnknownCurrencyCode
+        If the given currency code data isn't defined
     """
 
     CURRENCIES = {
@@ -1110,7 +1113,7 @@ class Currency:
         currency_code = currency_code.upper()
 
         if currency_code not in Currency.CURRENCIES:
-            raise ValueError('Unknown currency code %s.' % currency_code)
+            raise UnknownCurrencyCode(currency_code)
 
         self._currency_code = currency_code
 
