@@ -30,7 +30,7 @@ class Money:
             currency = Currency(str(currency))
 
         try:
-            self._amount = Decimal(amount)
+            self._amount = Decimal(str(amount))
         except InvalidOperation:
             raise InvalidAmount(amount)
 
@@ -194,7 +194,7 @@ class Money:
     def __round__(self, n=None):
         return self.__class__(round(self._amount, n), self._currency)
 
-    def to(self, currency: Currency):
+    def to(self, currency: Union[Currency, str]):
         """Returns the equivalent money object in another currency."""
 
         if currency == self._currency:
@@ -203,12 +203,12 @@ class Money:
         if xrates.backend is None:
             raise ExchangeBackendNotSet()
 
-        origin = self._currency.currency_code
-        target = currency.currency_code
+        if not isinstance(currency, Currency):
+            currency = Currency(currency)
 
-        rate = xrates.backend.quotation(origin, target)
+        rate = xrates.backend.quotation(self._currency.currency_code, currency.currency_code)
         if rate is None:
-            raise ExchangeRateNotFound(xrates.backend_name, origin, origin)
+            raise ExchangeRateNotFound(xrates.backend_name, self._currency, currency)
 
         return self.__class__(self._amount * rate, currency)
 
