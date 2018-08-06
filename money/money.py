@@ -83,7 +83,7 @@ class Money:
         if not isinstance(other, Money):
             return False
 
-        return self._amount == other.real and self._currency == other.currency
+        return self.amount == other.amount and self._currency.currency_code == other.currency.currency_code
 
     def __ne__(self, other):
         return not self == other
@@ -178,9 +178,6 @@ class Money:
 
     def __abs__(self):
         return self.__class__(abs(self._amount), self._currency)
-
-    def __invert__(self):
-        return self.__class__(~self._amount, self._currency)
 
     def __int__(self):
         return int(self._amount)
