@@ -3,7 +3,7 @@ from abc import ABC
 from decimal import Decimal
 from importlib import import_module
 
-from money.exceptions import InvalidExchangeBackend
+from money.exceptions import InvalidExchangeBackend, ExchangeBackendNotSet
 
 
 class BaseBackend(ABC):
@@ -85,6 +85,18 @@ class ExchangeRates:
             raise InvalidExchangeBackend()
 
         self._backend = backend
+
+    def __getattr__(self, item):
+        if self._backend is None:
+            raise ExchangeBackendNotSet()
+        return getattr(self._backend, item)
+
+    def __setattr__(self, key, value):
+        if key == '_backend' or key == 'backend':
+            return super().__setattr__(key, value)
+        if self._backend is None:
+            raise ExchangeBackendNotSet()
+        return setattr(self._backend, key, value)
 
 
 xrates = ExchangeRates()
