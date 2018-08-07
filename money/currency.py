@@ -1179,3 +1179,14 @@ class Currency:
 
     def __str__(self):
         return self.currency_code
+
+    def __eq__(self, other):
+        if isinstance(other, str):
+            return other == self.currency_code
+        elif isinstance(other, Currency):
+            return other.currency_code == self.currency_code
+        else:
+            return NotImplemented
+
+    def __ne__(self, other):
+        return not self == other
