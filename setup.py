@@ -21,7 +21,7 @@ setup(
     packages=find_packages(exclude=['tests*']),
     install_requires=['Babel>=2.5.0'],
     python_requires='>=3',
-    classifiers=(
+    classifiers=[
         'Programming Language :: Python :: Implementation :: CPython',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
@@ -30,5 +30,5 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Intended Audience :: Developers'
-    )
+    ]
 )
