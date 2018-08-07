@@ -1,23 +1,10 @@
-from decimal import Decimal, InvalidOperation, ROUND_DOWN, ROUND_HALF_UP, ROUND_HALF_EVEN, ROUND_CEILING, ROUND_FLOOR, \
-    ROUND_UP, ROUND_HALF_DOWN, ROUND_05UP
-from typing import Union
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 from babel.numbers import format_currency
 
 from money.currency import Currency
 from money.exceptions import InvalidOperandType, InvalidAmount, ExchangeBackendNotSet, ExchangeRateNotFound
 from money.exchange import xrates
-
-DecimalRoundingModes = Union[
-    ROUND_DOWN,
-    ROUND_HALF_UP,
-    ROUND_HALF_EVEN,
-    ROUND_CEILING,
-    ROUND_FLOOR,
-    ROUND_UP,
-    ROUND_HALF_DOWN,
-    ROUND_05UP
-]
 
 
 class Money:
@@ -188,10 +175,10 @@ class Money:
     def __bool__(self):
         return bool(self._amount)
 
-    def __round__(self, n=None):
+    def __round__(self, n=0):
         return self.__class__(round(self._amount, n), self._currency)
 
-    def to(self, currency: Union[Currency, str]):
+    def to(self, currency):
         """Returns the equivalent money object in another currency."""
 
         if currency == self._currency:
@@ -222,5 +209,5 @@ class Money:
         return sub_units_rounded.quantize(decimal_precision, rounding=Money._rounding_mode)
 
     @classmethod
-    def set_rounding_mode(cls, mode: DecimalRoundingModes):
+    def set_rounding_mode(cls, mode):
         cls._rounding_mode = mode
