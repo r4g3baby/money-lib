@@ -1,0 +1,46 @@
+image: python:3.7
+
+before_script:
+  - python -V
+
+stages:
+  - test
+  - deploy
+
+test:3.4:
+  image: python:3.4
+  stage: test
+  script:
+    - pip install -r requirements/requirements-gitlab-ci.txt
+    - tox -e py34
+
+test:3.5:
+  image: python:3.5
+  stage: test
+  script:
+    - pip install -r requirements/requirements-gitlab-ci.txt
+    - tox -e py35
+
+test:3.6:
+  image: python:3.6
+  stage: test
+  script:
+    - pip install -r requirements/requirements-gitlab-ci.txt
+    - tox -e py36
+
+test:3.7:
+  stage: test
+  script:
+    - pip install -r requirements/requirements-gitlab-ci.txt
+    - tox -e py37
+
+deploy:
+  stage: deploy
+  script:
+    - pip install -r requirements/requirements-packaging.txt
+    - python setup.py sdist bdist_wheel
+    - twine upload dist/*
+  only:
+    - tags
+    - triggers
+    - schedules
