@@ -43,7 +43,7 @@ class ExchangeBackendNotSet(ExchangeError):
     def __init__(self):
         msg = (
             'Exchange backend hasn\'t been set yet. Set it using '
-            'money.xrates.backend = \'path.to.backend\''
+            'money.xrates.backend = \'path.to.backend\'.'
         )
         super().__init__(msg)
 

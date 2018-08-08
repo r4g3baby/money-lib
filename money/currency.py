@@ -1177,16 +1177,18 @@ class Currency:
 
         return Currency.CURRENCIES[self.currency_code]['sub_unit']
 
+    def __repr__(self):
+        return self.currency_code
+
     def __str__(self):
         return self.currency_code
 
     def __eq__(self, other):
+        if isinstance(other, Currency):
+            return other.currency_code == self.currency_code
         if isinstance(other, str):
             return other == self.currency_code
-        elif isinstance(other, Currency):
-            return other.currency_code == self.currency_code
-        else:
-            return NotImplemented
+        return NotImplemented
 
     def __ne__(self, other):
         return not self == other
