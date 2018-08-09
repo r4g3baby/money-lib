@@ -41,14 +41,14 @@ class Money:
 
         return self._currency
 
-    def __hash__(self):
-        return hash((self._amount, self._currency))
-
     def __repr__(self):
         return '{} {}'.format(self._currency, self.amount)
 
     def __str__(self):
         return '{} {}'.format(self._currency, self.amount)
+
+    def __hash__(self):
+        return hash((self._amount, self._currency))
 
     def __lt__(self, other):
         if not isinstance(other, Money):
@@ -92,70 +92,82 @@ class Money:
         return self._amount > other.real
 
     def __add__(self, other):
-        if isinstance(other, Money):
-            other = other.to(self._currency).real
-        else:
-            other = Decimal(other)
+        other = self._parse_other(other)
 
         return self.__class__(self._amount + other, self._currency)
 
     def __radd__(self, other):
-        return self.__add__(other)
+        other = self._parse_other(other)
+
+        return self.__class__(other + self._amount, self._currency)
 
     def __sub__(self, other):
-        if isinstance(other, Money):
-            other = other.to(self._currency).real
-        else:
-            other = Decimal(other)
+        other = self._parse_other(other)
 
         return self.__class__(self._amount - other, self._currency)
 
     def __rsub__(self, other):
-        return self.__sub__(other)
+        other = self._parse_other(other)
+
+        return self.__class__(other - self._amount, self._currency)
 
     def __mul__(self, other):
-        if isinstance(other, Money):
-            other = other.to(self._currency).real
-        else:
-            other = Decimal(other)
+        other = self._parse_other(other)
 
         return self.__class__(self._amount * other, self._currency)
 
     def __rmul__(self, other):
-        return self.__mul__(other)
+        other = self._parse_other(other)
 
-    def __truediv__(self, other):
-        if isinstance(other, Money):
-            other = other.to(self._currency).real
-        else:
-            other = Decimal(other)
+        return self.__class__(other * self._amount, self._currency)
+
+    def __truediv__(self, other, inverse=False):
+        other = self._parse_other(other)
 
         if other == Decimal(0):
             raise ZeroDivisionError
 
         return self.__class__(self._amount / other, self._currency)
 
+    def __rtruediv__(self, other):
+        other = self._parse_other(other)
+
+        if self._amount == Decimal(0):
+            raise ZeroDivisionError
+
+        return self.__class__(other / self._amount, self._currency)
+
     def __floordiv__(self, other):
-        if isinstance(other, Money):
-            other = other.to(self._currency).real
-        else:
-            other = Decimal(other)
+        other = self._parse_other(other)
 
         if other == Decimal(0):
             raise ZeroDivisionError
 
         return self.__class__(self._amount // other, self._currency)
 
+    def __rfloordiv__(self, other):
+        other = self._parse_other(other)
+
+        if self._amount == Decimal(0):
+            raise ZeroDivisionError
+
+        return self.__class__(other // self._amount, self._currency)
+
     def __mod__(self, other):
-        if isinstance(other, Money):
-            other = other.to(self._currency).real
-        else:
-            other = Decimal(other)
+        other = self._parse_other(other)
 
         if other == Decimal(0):
             raise ZeroDivisionError
 
         return self.__class__(self._amount % other, self._currency)
+
+    def __rmod__(self, other):
+        other = self._parse_other(other)
+
+        if self._amount == Decimal(0):
+            raise ZeroDivisionError
+
+        return self.__class__(other % self._amount, self._currency)
 
     def __neg__(self):
         return self.__class__(-self._amount, self._currency)
@@ -200,6 +212,11 @@ class Money:
         """Returns a string of the currency formatted for the specified locale."""
 
         return format_currency(self._amount, self.currency.currency_code, locale=locale)
+
+    def _parse_other(self, other) -> Decimal:
+        if isinstance(other, Money):
+            return other.to(self._currency).real
+        return Decimal(other)
 
     def _round(self) -> Decimal:
         sub_units = Decimal(str(1 / self._currency.sub_unit).rstrip('0'))
