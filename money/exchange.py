@@ -41,7 +41,7 @@ class SimpleBackend(BaseBackend):
     def base(self, currency):
         self._base = currency
 
-    def set_rate(self, currency, rate):
+    def setrate(self, currency, rate):
         self._rates[currency] = rate
 
     def rate(self, currency):
