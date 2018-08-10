@@ -45,7 +45,7 @@ class Money:
         return '{} {}'.format(self._currency, self.amount)
 
     def __str__(self):
-        return '{} {}'.format(self._currency, self.amount)
+        return self.format()
 
     def __hash__(self):
         return hash((self._amount, self._currency))
