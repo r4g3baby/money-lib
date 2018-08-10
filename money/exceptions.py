@@ -2,10 +2,10 @@ class MoneyException(Exception):
     pass
 
 
-class UnknownCurrencyCode(MoneyException, ValueError):
+class InvalidCurrencyFormat(MoneyException, ValueError):
     def __init__(self, currency):
         msg = (
-            'Unknown currency code \'{}\'.'
+            'Currency not in ISO 4217 format: \'{}\'.'
         ).format(currency)
         super().__init__(msg)
 

@@ -33,7 +33,8 @@ class Money:
     def amount(self) -> Decimal:
         """Returns the amount rounded to the correct number of decimal places for the currency."""
 
-        return self._round()
+        decimal_precision = Decimal(str(1 / (10 ** self._currency.precision)).rstrip('0'))
+        return self._amount.quantize(decimal_precision, rounding=Money._rounding_mode)
 
     @property
     def currency(self) -> Currency:
@@ -217,13 +218,6 @@ class Money:
         if isinstance(other, Money):
             return other.to(self._currency).real
         return Decimal(other)
-
-    def _round(self) -> Decimal:
-        sub_units = Decimal(str(1 / self._currency.sub_unit).rstrip('0'))
-        sub_units_rounded = self._amount.quantize(sub_units, rounding=Money._rounding_mode)
-
-        decimal_precision = Decimal(str(1 / (10 ** self._currency.default_fraction_digits)).rstrip('0'))
-        return sub_units_rounded.quantize(decimal_precision, rounding=Money._rounding_mode)
 
     @classmethod
     def set_rounding_mode(cls, mode):
