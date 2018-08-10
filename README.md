@@ -24,7 +24,7 @@ A Money object can be created with an *amount* (can be any valid value in `decim
 USD 7.37
 ```
 
-Money objects are immutable by convention and hashable. Once created, you can use read-only properties *real* (decimal.Decimal), *amount* (decimal.Decimal) and *currency* (str) to access its internal components.
+Money objects are immutable by convention and hashable. Once created, you can use read-only properties *real* (decimal.Decimal), *amount* (decimal.Decimal) and *currency* (Currency) to access its internal components.
 The *real* property returns the stored amount used for calculations and *amount* returns the amount rounded to the correct number of decimal places for the currency.
 
 ```python
@@ -85,4 +85,4 @@ assert a + b == Money('1.25', 'AAA')
 
 Most of the code is based of https://github.com/carlospalol/money.
 
-Currencies list was taken from https://github.com/sebastianbergmann/money.
+Currency data and formatting is powered by Babel
