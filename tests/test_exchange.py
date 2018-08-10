@@ -50,8 +50,8 @@ class TestSimpleBackend:
     def setup_method(self):
         xrates.backend = 'money.exchange.SimpleBackend'
         xrates.base = 'USD'
-        xrates.set_rate('EUR', 2)
-        xrates.set_rate('JPY', 8)
+        xrates.setrate('EUR', 2)
+        xrates.setrate('JPY', 8)
 
     def test_base(self):
         assert xrates.base == 'USD'

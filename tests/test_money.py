@@ -10,7 +10,7 @@ from money.money import Money
 def setup_module():
     xrates.backend = 'money.exchange.SimpleBackend'
     xrates.base = 'USD'
-    xrates.set_rate('EUR', 2)
+    xrates.setrate('EUR', 2)
 
 
 def teardown_module():
@@ -50,8 +50,8 @@ def test_format():
 
 
 def test_str():
-    assert str(Money(8, 'USD')) == 'USD 8.00'
-    assert str(Money(8, 'JPY')) == 'JPY 8'
+    assert str(Money(8, 'USD')) == '$8.00'
+    assert str(Money(8, 'JPY')) == '¥8'
 
 
 def test_lt():
