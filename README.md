@@ -15,6 +15,15 @@ pip install money-lib
 
 ## Usage
 
+A Currency object can be created with a *currency_code* (must be a string and valid ISO 4217 format: `^[A-Z]{3}$`).
+
+```python
+>>> from money.currency import Currency
+>>> currency = Currency('USD')
+>>> currency
+USD
+```
+
 A Money object can be created with an *amount* (can be any valid value in `decimal.Decimal(value)`) and a *currency* (can be a string or a `Currency(code)` object).
 
 ```python
@@ -85,4 +94,4 @@ assert a + b == Money('1.25', 'AAA')
 
 Most of the code is based of https://github.com/carlospalol/money.
 
-Currency data and formatting is powered by Babel
+Currency data and formatting is powered by [Babel](http://babel.pocoo.org).
