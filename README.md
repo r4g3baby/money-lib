@@ -47,7 +47,7 @@ USD 2.50
 USD 15.00
 ```
 
-All arithmetic operators support automatic currency conversion as long as you have a [currency exchange backend](#Currency-exchange) setup.
+All arithmetic operators support automatic currency conversion as long as you have a [currency exchange backend](#currency-exchange) setup.
 The currency of the leftmost object has priority.
 
 ```python
