@@ -2,7 +2,7 @@ from decimal import Decimal
 
 import pytest
 
-from money.exceptions import UnknownCurrencyCode, InvalidAmount, InvalidOperandType
+from money.exceptions import InvalidCurrencyFormat, InvalidAmount, InvalidOperandType
 from money.exchange import xrates
 from money.money import Money
 
@@ -36,7 +36,7 @@ def test_construction():
     assert money.amount == Decimal('4')
     assert money.currency.currency_code == 'AUD'
 
-    with pytest.raises(UnknownCurrencyCode):
+    with pytest.raises(InvalidCurrencyFormat):
         Money(1, 'dummy value')
 
     with pytest.raises(InvalidAmount):

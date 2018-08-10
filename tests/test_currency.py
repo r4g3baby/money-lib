@@ -1,44 +1,35 @@
 import pytest
 
 from money.currency import Currency
-from money.exceptions import UnknownCurrencyCode
+from money.exceptions import InvalidCurrencyFormat
 
 
 def test_construction():
     currency = Currency('USD')
 
     assert currency.currency_code == 'USD'
-    assert currency.display_name == 'US Dollar'
-    assert currency.numeric_code == 840
-    assert currency.default_fraction_digits == 2
-    assert currency.sub_unit == 100
+    assert currency.precision == 2
+    assert currency.display_name() == 'US Dollar'
+    assert currency.symbol() == '$'
 
-    currency = Currency('jpY')
+    currency = Currency('JPY')
 
     assert currency.currency_code == 'JPY'
-    assert currency.display_name == 'Yen'
-    assert currency.numeric_code == 392
-    assert currency.default_fraction_digits == 0
-    assert currency.sub_unit == 1
+    assert currency.precision == 0
+    assert currency.display_name() == 'Japanese Yen'
+    assert currency.symbol() == '¥'
 
-    with pytest.raises(UnknownCurrencyCode):
+    with pytest.raises(InvalidCurrencyFormat):
         Currency('dummy value')
 
 
-def test_add_currency():
-    Currency.add_currency('DUMMY', 'Custom', 143, 4, 30)
+def test_locale():
+    currency = Currency('USD')
 
-    currency = Currency('DUMMY')
+    assert currency.display_name() == 'US Dollar'
+    assert currency.display_name('pt_PT') == 'dólar dos Estados Unidos'
+    assert currency.display_name('de_DE') == 'US-Dollar'
 
-    assert currency.currency_code == 'DUMMY'
-    assert currency.display_name == 'Custom'
-    assert currency.numeric_code == 143
-    assert currency.default_fraction_digits == 4
-    assert currency.sub_unit == 30
-
-
-def test_remove_currency():
-    del Currency.CURRENCIES['DUMMY']
-
-    with pytest.raises(UnknownCurrencyCode):
-        Currency('DUMMY')
+    assert currency.symbol() == '$'
+    assert currency.symbol('pt_PT') == 'US$'
+    assert currency.symbol('de_DE') == '$'
