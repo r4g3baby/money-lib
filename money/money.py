@@ -212,7 +212,7 @@ class Money:
     def format(self, locale: str = 'en_US') -> str:
         """Returns a string of the currency formatted for the specified locale."""
 
-        return format_currency(self._amount, self.currency.currency_code, locale=locale)
+        return format_currency(self._amount, self.currency.currency_code, locale=locale).replace(u'\xa0', u' ')
 
     def _parse_other(self, other) -> Decimal:
         if isinstance(other, Money):
