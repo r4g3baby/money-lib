@@ -7,14 +7,14 @@ from money.exceptions import InvalidCurrencyFormat
 def test_construction():
     currency = Currency('USD')
 
-    assert currency.currency_code == 'USD'
+    assert currency.code == 'USD'
     assert currency.precision == 2
     assert currency.display_name() == 'US Dollar'
     assert currency.symbol() == '$'
 
     currency = Currency('JPY')
 
-    assert currency.currency_code == 'JPY'
+    assert currency.code == 'JPY'
     assert currency.precision == 0
     assert currency.display_name() == 'Japanese Yen'
     assert currency.symbol() == '¥'

@@ -1,12 +1,11 @@
 import abc
-from abc import ABC
 from decimal import Decimal
 from importlib import import_module
 
 from money.exceptions import InvalidExchangeBackend, ExchangeBackendNotSet
 
 
-class BaseBackend(ABC):
+class BaseBackend(abc.ABC):
     """Abstract base class API for exchange backends."""
 
     @property

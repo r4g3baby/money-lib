@@ -1,7 +1,7 @@
 from decimal import Decimal
 
-from money.exchange import xrates, SimpleBackend
-from money.money import Money
+from money import xrates, Money
+from money.exchange import SimpleBackend
 
 
 class TestExchange:
@@ -78,10 +78,10 @@ class TestSimpleBackend:
 
         assert money.real == Decimal(8)
         assert money.amount == Decimal(8)
-        assert money.currency.currency_code == 'EUR'
+        assert money.currency == 'EUR'
 
         money = Money(4, 'USD').to('JPY')
 
         assert money.real == Decimal(32)
         assert money.amount == Decimal(32)
-        assert money.currency.currency_code == 'JPY'
+        assert money.currency == 'JPY'

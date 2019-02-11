@@ -1,195 +1,132 @@
-from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+from decimal import Decimal, ROUND_HALF_UP
 
 from babel.numbers import format_currency
 
 from money.currency import Currency
-from money.exceptions import InvalidOperandType, InvalidAmount, ExchangeBackendNotSet, ExchangeRateNotFound
+from money.exceptions import ExchangeBackendNotSet, ExchangeRateNotFound
 from money.exchange import xrates
 
 
-class Money:
+def _make_comparison_operator(name):
+    method = getattr(Decimal, name, None)
+
+    def operator_func(self, other, *args):
+        if isinstance(other, Money):
+            other = other.to(self._currency)
+
+        return method(self, other, *args)
+
+    return operator_func
+
+
+def _make_arithmetic_operator(name):
+    method = getattr(Decimal, name, None)
+
+    def operator_func(self, other, *args):
+        if isinstance(other, Money):
+            other = other.to(self._currency)
+
+        result = method(self, other, *args)
+        if result is NotImplemented:
+            return NotImplemented
+
+        return self.__class__(result, self._currency)
+
+    return operator_func
+
+
+# noinspection PyMethodOverriding
+class Money(Decimal):
     """Class representing a monetary amount."""
 
     _rounding_mode = ROUND_HALF_UP
 
-    def __init__(self, amount, currency):
+    def __new__(cls, amount, currency):
+        self = super().__new__(cls, amount)
+
         if not isinstance(currency, Currency):
             currency = Currency(str(currency))
 
-        try:
-            self._amount = Decimal(str(amount))
-        except InvalidOperation:
-            raise InvalidAmount(amount)
-
         self._currency = currency
 
-    @property
-    def real(self) -> Decimal:
-        """Returns the real amount (without rounding)."""
-
-        return self._amount
+        return self
 
     @property
-    def amount(self) -> Decimal:
+    def amount(self):
         """Returns the amount rounded to the correct number of decimal places for the currency."""
 
         decimal_precision = Decimal(str(1 / (10 ** self._currency.precision)).rstrip('0'))
-        return self._amount.quantize(decimal_precision, rounding=Money._rounding_mode)
+        return self.quantize(decimal_precision, rounding=Money._rounding_mode)
 
     @property
-    def currency(self) -> Currency:
+    def currency(self):
         """Returns the currency."""
 
         return self._currency
 
     def __repr__(self):
-        return '{} {}'.format(self._currency, self.amount)
+        return 'Money({}, \'{}\')'.format(super().__repr__(), self._currency)
 
     def __str__(self):
         return self.format()
 
-    def __hash__(self):
-        return hash((self._amount, self._currency))
-
-    def __lt__(self, other):
-        if not isinstance(other, Money):
-            raise InvalidOperandType(other, '<')
-
-        other = other.to(self._currency)
-
-        return self._amount < other.real
-
-    def __le__(self, other):
-        if not isinstance(other, Money):
-            raise InvalidOperandType(other, '<=')
-
-        other = other.to(self._currency)
-
-        return self._amount <= other.real
+    def __reduce__(self):
+        return self.__class__, (Decimal.__str__(self), self._currency.code)
 
     def __eq__(self, other):
-        if not isinstance(other, Money):
-            return False
+        result = super().__eq__(other)
+        if result is NotImplemented:
+            return NotImplemented
 
-        return self.amount == other.amount and self._currency.currency_code == other.currency.currency_code
+        if isinstance(other, Money):
+            return result and other._currency == self._currency
+        else:
+            return result
 
     def __ne__(self, other):
         return not self == other
 
-    def __ge__(self, other):
-        if not isinstance(other, Money):
-            raise InvalidOperandType(other, '>=')
+    __hash__ = Decimal.__hash__
 
-        other = other.to(self._currency)
+    __lt__ = _make_comparison_operator('__lt__')
+    __le__ = _make_comparison_operator('__le__')
+    __gt__ = _make_comparison_operator('__gt__')
+    __ge__ = _make_comparison_operator('__ge__')
 
-        return self._amount >= other.real
-
-    def __gt__(self, other):
-        if not isinstance(other, Money):
-            raise InvalidOperandType(other, '>=')
-
-        other = other.to(self._currency)
-
-        return self._amount > other.real
-
-    def __add__(self, other):
-        other = self._parse_other(other)
-
-        return self.__class__(self._amount + other, self._currency)
-
-    def __radd__(self, other):
-        other = self._parse_other(other)
-
-        return self.__class__(other + self._amount, self._currency)
-
-    def __sub__(self, other):
-        other = self._parse_other(other)
-
-        return self.__class__(self._amount - other, self._currency)
-
-    def __rsub__(self, other):
-        other = self._parse_other(other)
-
-        return self.__class__(other - self._amount, self._currency)
-
-    def __mul__(self, other):
-        other = self._parse_other(other)
-
-        return self.__class__(self._amount * other, self._currency)
-
-    def __rmul__(self, other):
-        other = self._parse_other(other)
-
-        return self.__class__(other * self._amount, self._currency)
-
-    def __truediv__(self, other, inverse=False):
-        other = self._parse_other(other)
-
-        if other == Decimal(0):
-            raise ZeroDivisionError
-
-        return self.__class__(self._amount / other, self._currency)
-
-    def __rtruediv__(self, other):
-        other = self._parse_other(other)
-
-        if self._amount == Decimal(0):
-            raise ZeroDivisionError
-
-        return self.__class__(other / self._amount, self._currency)
-
-    def __floordiv__(self, other):
-        other = self._parse_other(other)
-
-        if other == Decimal(0):
-            raise ZeroDivisionError
-
-        return self.__class__(self._amount // other, self._currency)
-
-    def __rfloordiv__(self, other):
-        other = self._parse_other(other)
-
-        if self._amount == Decimal(0):
-            raise ZeroDivisionError
-
-        return self.__class__(other // self._amount, self._currency)
-
-    def __mod__(self, other):
-        other = self._parse_other(other)
-
-        if other == Decimal(0):
-            raise ZeroDivisionError
-
-        return self.__class__(self._amount % other, self._currency)
-
-    def __rmod__(self, other):
-        other = self._parse_other(other)
-
-        if self._amount == Decimal(0):
-            raise ZeroDivisionError
-
-        return self.__class__(other % self._amount, self._currency)
+    __add__ = _make_arithmetic_operator('__add__')
+    __radd__ = _make_arithmetic_operator('__radd__')
+    __sub__ = _make_arithmetic_operator('__sub__')
+    __rsub__ = _make_arithmetic_operator('__rsub__')
+    __mul__ = _make_arithmetic_operator('__mul__')
+    __rmul__ = _make_arithmetic_operator('__rmul__')
+    __truediv__ = _make_arithmetic_operator('__truediv__')
+    __rtruediv__ = _make_arithmetic_operator('__rtruediv__')
+    __divmod__ = _make_arithmetic_operator('__divmod__')
+    __rdivmod__ = _make_arithmetic_operator('__rdivmod__')
+    __mod__ = _make_arithmetic_operator('__mod__')
+    __rmod__ = _make_arithmetic_operator('__rmod__')
+    __floordiv__ = _make_arithmetic_operator('__floordiv__')
+    __rfloordiv__ = _make_arithmetic_operator('__rfloordiv__')
+    __pow__ = _make_arithmetic_operator('__pow__')
+    __rpow__ = _make_arithmetic_operator('__rpow__')
 
     def __neg__(self):
-        return self.__class__(-self._amount, self._currency)
+        return self.__class__(super().__neg__(), self._currency)
 
     def __pos__(self):
-        return self.__class__(+self._amount, self._currency)
+        return self.__class__(super().__pos__(), self._currency)
 
     def __abs__(self):
-        return self.__class__(abs(self._amount), self._currency)
-
-    def __int__(self):
-        return int(self._amount)
-
-    def __float__(self):
-        return float(self._amount)
-
-    def __bool__(self):
-        return bool(self._amount)
+        return self.__class__(super().__abs__(), self._currency)
 
     def __round__(self, n=0):
-        return self.__class__(round(self._amount, n), self._currency)
+        return self.__class__(super().__round__(n), self._currency)
+
+    def __floor__(self):
+        return self.__class__(super().__floor__(), self._currency)
+
+    def __ceil__(self):
+        return self.__class__(super().__ceil__(), self._currency)
 
     def to(self, currency):
         """Returns the equivalent money object in another currency."""
@@ -201,23 +138,18 @@ class Money:
             raise ExchangeBackendNotSet()
 
         if not isinstance(currency, Currency):
-            currency = Currency(currency)
+            currency = Currency(str(currency))
 
-        rate = xrates.backend.quotation(self._currency.currency_code, currency.currency_code)
+        rate = xrates.backend.quotation(self._currency.code, currency.code)
         if rate is None:
             raise ExchangeRateNotFound(xrates.backend_name, self._currency, currency)
 
-        return self.__class__(self._amount * rate, currency)
+        return self.__class__(self * rate, currency)
 
-    def format(self, locale: str = 'en_US') -> str:
+    def format(self, locale='en_US'):
         """Returns a string of the currency formatted for the specified locale."""
 
-        return format_currency(self._amount, self.currency.currency_code, locale=locale).replace(u'\xa0', u' ')
-
-    def _parse_other(self, other) -> Decimal:
-        if isinstance(other, Money):
-            return other.to(self._currency).real
-        return Decimal(other)
+        return format_currency(self, self.currency.code, locale=locale).replace(u'\xa0', u' ')
 
     @classmethod
     def set_rounding_mode(cls, mode):
