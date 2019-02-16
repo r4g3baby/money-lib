@@ -71,7 +71,7 @@ class Money(Decimal):
         return self.format()
 
     def __reduce__(self):
-        return self.__class__, (Decimal.__str__(self), self._currency.code)
+        return self.__class__, (Decimal.__str__(self), self._currency)
 
     def __eq__(self, other):
         result = super().__eq__(other)
