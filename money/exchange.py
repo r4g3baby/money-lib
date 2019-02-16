@@ -2,7 +2,7 @@ import abc
 from decimal import Decimal
 from importlib import import_module
 
-from money.exceptions import InvalidExchangeBackend, ExchangeBackendNotSet
+from money.exceptions import ExchangeBackendNotSet, InvalidExchangeBackend
 
 
 class BaseBackend(abc.ABC):

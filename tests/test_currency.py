@@ -1,6 +1,6 @@
 import pytest
 
-from money.currency import Currency
+from money import Currency
 from money.exceptions import InvalidCurrencyFormat
 
 

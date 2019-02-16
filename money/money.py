@@ -2,9 +2,8 @@ from decimal import Decimal, ROUND_HALF_UP
 
 from babel.numbers import format_currency
 
-from money.currency import Currency
+from money import Currency, xrates
 from money.exceptions import ExchangeBackendNotSet, ExchangeRateNotFound
-from money.exchange import xrates
 
 
 def _make_comparison_operator(name):

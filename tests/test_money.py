@@ -2,7 +2,7 @@ from decimal import Decimal, InvalidOperation
 
 import pytest
 
-from money import xrates, Money
+from money import Money, xrates
 from money.exceptions import InvalidCurrencyFormat
 
 

@@ -1,6 +1,6 @@
 import re
 
-from babel.numbers import get_currency_precision, get_currency_name, get_currency_symbol
+from babel.numbers import get_currency_name, get_currency_precision, get_currency_symbol
 
 from money.exceptions import InvalidCurrencyFormat
 
