@@ -18,7 +18,7 @@ pip install money-lib
 A Currency object can be created with a *currency_code* (must be a string and valid ISO 4217 format: `^[A-Z]{3}$`).
 
 ```python
->>> from money.currency import Currency
+>>> from money import Currency
 >>> currency = Currency('USD')
 >>> currency
 USD
@@ -27,19 +27,17 @@ USD
 A Money object can be created with an *amount* (can be any valid value in `decimal.Decimal(value)`) and a *currency* (can be a string or a `Currency(code)` object).
 
 ```python
->>> from money.money import Money
+>>> from money import Money
 >>> money = Money('7.37', 'USD')
 >>> money
 USD 7.37
 ```
 
-Money objects are immutable by convention and hashable. Once created, you can use read-only properties *real* (decimal.Decimal), *amount* (decimal.Decimal) and *currency* (Currency) to access its internal components.
-The *real* property returns the stored amount used for calculations and *amount* returns the amount rounded to the correct number of decimal places for the currency.
+Money objects are immutable by convention and hashable. Once created, you can use read-only properties *amount* (decimal.Decimal) and *currency* (Currency) to access its internal components.
+The *amount* property returns the amount rounded to the correct number of decimal places for the currency.
 
 ```python
 >>> money = Money('6.831', 'USD')
->>> money.real
-Decimal('6.831')
 >>> money.amount
 Decimal('6.83')
 >>> money.currency
@@ -75,7 +73,7 @@ A simple proof-of-concept backend `money.exchange.SimpleBackend` is included.
 
 ```python
 from decimal import Decimal
-from money.money import Money, xrates
+from money import Money, xrates
 
 xrates.backend = 'money.exchange.SimpleBackend'
 xrates.base = 'USD'
@@ -92,6 +90,6 @@ assert a + b == Money('1.25', 'AAA')
 
 ## Credits
 
-Most of the code is based of https://github.com/carlospalol/money.
+Currency exchange support based on https://github.com/carlospalol/money.
 
 Currency data and formatting is powered by [Babel](http://babel.pocoo.org).
