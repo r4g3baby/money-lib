@@ -15,13 +15,6 @@ stages:
   - test
   - deploy
 
-test:3.4:
-  image: python:3.4
-  stage: test
-  script:
-    - pip install -r requirements/requirements-gitlab-ci.txt
-    - tox -e py34
-
 test:3.5:
   image: python:3.5
   stage: test
