@@ -9,7 +9,7 @@ from money.exceptions import InvalidCurrencyFormat
 def setup_module():
     xrates.backend = 'money.exchange.SimpleBackend'
     xrates.base = 'USD'
-    xrates.setrate('EUR', 2)
+    xrates.setrate('EUR', Decimal(2))
 
 
 def teardown_module():
@@ -39,7 +39,7 @@ def test_construction():
         Money(1, 'dummy value')
 
     with pytest.raises(InvalidOperation):
-        Money('invalid', 'USD')
+        Money('dummy value', 'USD')
 
 
 def test_format():

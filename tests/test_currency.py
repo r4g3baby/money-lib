@@ -12,15 +12,18 @@ def test_construction():
     assert currency.display_name() == 'US Dollar'
     assert currency.symbol() == '$'
 
-    currency = Currency('JPY')
-
-    assert currency.code == 'JPY'
-    assert currency.precision == 0
-    assert currency.display_name() == 'Japanese Yen'
-    assert currency.symbol() == '¥'
-
     with pytest.raises(InvalidCurrencyFormat):
         Currency('dummy value')
+
+
+def test_precision():
+    currency = Currency('USD')
+
+    assert currency.precision == 2
+
+    currency = Currency('JPY')
+
+    assert currency.precision == 0
 
 
 def test_locale():

@@ -1,6 +1,9 @@
 from decimal import Decimal
 
+import pytest
+
 from money import Money, xrates
+from money.exceptions import ExchangeBackendNotSet, ExchangeRateNotFound, InvalidExchangeBackend
 from money.exchange import SimpleBackend
 
 
@@ -10,28 +13,26 @@ class TestExchange:
         xrates.backend = None
 
     def test_set_backend_str(self):
-        assert xrates.backend is None
-
         xrates.backend = 'money.exchange.SimpleBackend'
 
         assert xrates.backend is not None
         assert xrates.backend_name == 'SimpleBackend'
 
     def test_set_backend_class(self):
-        assert xrates.backend is None
-
         xrates.backend = SimpleBackend
 
         assert xrates.backend is not None
         assert xrates.backend_name == 'SimpleBackend'
 
     def test_set_backend_instance(self):
-        assert xrates.backend is None
-
         xrates.backend = SimpleBackend()
 
         assert xrates.backend is not None
         assert xrates.backend_name == 'SimpleBackend'
+
+    def test_set_invalid_backend(self):
+        with pytest.raises(InvalidExchangeBackend):
+            xrates.backend = True
 
     def test_unset_backend(self):
         xrates.backend = 'money.exchange.SimpleBackend'
@@ -52,8 +53,8 @@ class TestSimpleBackend:
     def setup_method(self):
         xrates.backend = 'money.exchange.SimpleBackend'
         xrates.base = 'USD'
-        xrates.setrate('EUR', 2)
-        xrates.setrate('JPY', 8)
+        xrates.setrate('EUR', Decimal(2))
+        xrates.setrate('JPY', Decimal(8))
 
     def test_base(self):
         assert xrates.base == 'USD'
@@ -76,14 +77,15 @@ class TestSimpleBackend:
         assert xrates.quotation('JPY', 'JPY') == 1
 
     def test_conversion(self):
-        money = Money(4, 'USD').to('EUR')
+        money = Money('4', 'USD').to('EUR')
 
-        assert money.real == Decimal(8)
-        assert money.amount == Decimal(8)
+        assert money.amount == 8
         assert money.currency == 'EUR'
 
-        money = Money(4, 'USD').to('JPY')
+        money = Money('4', 'USD').to('JPY')
 
-        assert money.real == Decimal(32)
-        assert money.amount == Decimal(32)
+        assert money.amount == 32
         assert money.currency == 'JPY'
+
+        with pytest.raises(ExchangeRateNotFound):
+            Money('4', 'EUR').to('GBP')
