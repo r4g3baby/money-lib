@@ -42,7 +42,9 @@ class TestExchange:
         xrates.backend = None
 
         assert xrates.backend is None
-        assert xrates.backend_name == 'NoneType'
+
+        with pytest.raises(ExchangeBackendNotSet):
+            xrates.backend_name
 
 
 class TestSimpleBackend:

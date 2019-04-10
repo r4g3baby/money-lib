@@ -63,6 +63,9 @@ class ExchangeRates:
     def backend_name(self):
         """Returns the class name of the current backend."""
 
+        if self._backend is None:
+            raise ExchangeBackendNotSet()
+
         return self._backend.__class__.__name__
 
     @backend.setter
