@@ -1,5 +1,5 @@
 __name__ = 'money'
-__version__ = '1.1.0'
+__version__ = '2.0.0'
 
 from .currency import Currency
 from .exchange import xrates
