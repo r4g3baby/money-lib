@@ -21,7 +21,7 @@ A Currency object can be created with a *currency_code* (must be a string and va
 >>> from money import Currency
 >>> currency = Currency('USD')
 >>> currency
-USD
+Currency('USD')
 ```
 
 A Money object can be created with an *amount* (can be any valid value in `decimal.Decimal(value)`) and a *currency* (can be a string or a `Currency(code)` object).
@@ -30,7 +30,7 @@ A Money object can be created with an *amount* (can be any valid value in `decim
 >>> from money import Money
 >>> money = Money('7.37', 'USD')
 >>> money
-USD 7.37
+Money(Decimal('7.37'), 'USD')
 ```
 
 Money objects are immutable by convention and hashable. Once created, you can use read-only properties *amount* (decimal.Decimal) and *currency* (Currency) to access its internal components.
@@ -41,27 +41,36 @@ The *amount* property returns the amount rounded to the correct number of decima
 >>> money.amount
 Decimal('6.83')
 >>> money.currency
-USD
+Currency('USD')
 ```
 
-Money emulates a numeric type and you can apply most arithmetic and comparison operators between money objects, integers (int) and decimal numbers (decimal.Decimal).
+Money can apply most arithmetic and comparison operators between money objects, integers (int) and decimal numbers (decimal.Decimal).
 
 ```python
 >>> money = Money('5', 'USD')
 >>> money / 2
-USD 2.50
+Money(Decimal('2.5'), 'USD')
 >>> money + Money('10', 'USD')
-USD 15.00
+Money(Decimal('15'), 'USD')
 ```
 
-All arithmetic operators support automatic currency conversion as long as you have a [currency exchange backend](#currency-exchange) setup.
+All comparison and arithmetic operators support automatic currency conversion as long as you have a [currency exchange backend](#currency-exchange) setup.
 The currency of the leftmost object has priority.
 
 ```python
 # Assuming the rate from USD to EUR is 2
 >>> money = Money('7.50', 'USD')
 >>> money + Money('5', 'EUR')
-USD 10.00
+Money(Decimal('10.00'), 'USD')
+```
+
+Money supports formatting for different locales.
+```python
+>>> money = Money('13.65', 'USD')
+>>> money.format()
+'$13.65'
+>>> money.format('pt_PT')
+'13,65 US$'
 ```
 
 ## Currency exchange
