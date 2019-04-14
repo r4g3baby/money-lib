@@ -20,6 +20,7 @@ setup(
     url='https://gitlab.com/R4G3_BABY/money-lib',
     packages=find_packages(exclude=['tests*']),
     install_requires=['Babel>=2.5.0'],
+    extras_require=['Django>=2.0'],
     python_requires='>=3',
     classifiers=[
         'Programming Language :: Python :: Implementation :: CPython',
