@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from money import Currency, forms, Money
 
 
-def _currency_field_name(name): return f"{name}_currency"
+def _currency_field_name(name): return '{}_currency'.format(name)
 
 
 class MoneyFieldProxy(object):
