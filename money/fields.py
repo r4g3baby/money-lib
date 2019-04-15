@@ -86,9 +86,13 @@ class MoneyField(models.DecimalField):
         return name, path, args, kwargs
 
     def formfield(self, **kwargs):
+        default = self.default
+        if isinstance(default, Money):
+            default = default.amount
+
         return super().formfield(**{
             'form_class': forms.MoneyField,
-            'default_amount': self.default.amount,
+            'default_amount': default,
             'default_currency': self.default_currency,
             'choices': self.currency_choices,
             **kwargs
