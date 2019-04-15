@@ -3,7 +3,7 @@ from decimal import Decimal
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from money import Currency, forms, Money
+from money import Currency, Money, forms
 
 
 def _currency_field_name(name): return '{}_currency'.format(name)
