@@ -40,6 +40,8 @@ class Money(Decimal):
 
     _rounding_mode = ROUND_HALF_UP
 
+    __slots__ = ('_currency',)
+
     def __new__(cls, amount, currency):
         self = super().__new__(cls, amount)
 
