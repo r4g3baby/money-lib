@@ -81,24 +81,51 @@ Its API is exposed through `money.xrates`, along with `xrates.backend` and `xrat
 A simple proof-of-concept backend `money.exchange.SimpleBackend` is included.
 
 ```python
-from decimal import Decimal
-from money import Money, xrates
+>>> from decimal import Decimal
+>>> from money import Money, xrates
 
-xrates.backend = 'money.exchange.SimpleBackend'
-xrates.base = 'USD'
-xrates.setrate('AAA', Decimal('2'))
-xrates.setrate('BBB', Decimal('8'))
+>>> xrates.backend = 'money.exchange.SimpleBackend'
+>>> xrates.base = 'USD'
+>>> xrates.setrate('AAA', Decimal('2'))
+>>> xrates.setrate('BBB', Decimal('8'))
 
-a = Money(1, 'AAA')
-b = Money(1, 'BBB')
+>>> a = Money('1', 'AAA')
+>>> b = Money('1', 'BBB')
 
-assert a.to('BBB') == Money('4', 'BBB')
-assert b.to('AAA') == Money('0.25', 'AAA')
-assert a + b == Money('1.25', 'AAA')
+>>> assert a.to('BBB') == Money('4', 'BBB')
+>>> assert b.to('AAA') == Money('0.25', 'AAA')
+>>> assert a + b == Money('1.25', 'AAA')
+```
+
+## Django integration
+
+Model fields usage:
+
+```python
+>>> from django.db import models
+>>> from money import fields, Money
+
+>>> class Product(models.Model):
+...     price = fields.MoneyField(max_digits=19, decimal_places=4, default=Money('10', 'USD'))
+```
+
+Model queries usage:
+
+```python
+# MoneyField creates another field (MoneyField name + '_currency') to store the currency
+>>> Product.objects.create(price=Money('10', 'USD'))
+>>> Product.objects.create(price='10', price_currency='USD')
+
+# Get all products where price is greater than 4 and the currency equals 'USD'
+>>> product = Product.objects.filter(price__gt=4, price_currency='USD').first()
+>>> product.price
+Money(Decimal('10.0000'), 'USD')
 ```
 
 ## Credits
 
 Currency exchange support based on https://github.com/carlospalol/money.
+
+Django model multiple database columns by [miracle2k](https://blog.elsdoerfer.name/2008/01/08/fuzzydates-or-one-django-model-field-multiple-database-columns/).
 
 Currency data and formatting is powered by [Babel](http://babel.pocoo.org).
