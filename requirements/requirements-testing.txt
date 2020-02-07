@@ -1,3 +1,0 @@
-Babel==2.6.0
-Django==2.2
-pytest==4.4.1
