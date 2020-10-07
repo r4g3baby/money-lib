@@ -17,7 +17,7 @@ setup(
     description='Python 3 money lib with decimal precision and currency exchange support.',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://gitlab.com/R4G3_BABY/money-lib',
+    url='https://github.com/r4g3baby/money-lib',
     packages=find_packages(exclude=['tests*']),
     install_requires=['Babel>=2.5.0'],
     extras_require={
