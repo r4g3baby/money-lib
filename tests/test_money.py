@@ -1,4 +1,6 @@
+from _decimal import ROUND_DOWN, ROUND_HALF_UP
 from decimal import Decimal, InvalidOperation
+from math import ceil, floor
 
 import pytest
 
@@ -48,9 +50,26 @@ def test_format():
     assert Money(9.345, 'JPY').format('ja_JP') == '￥9'
 
 
+def test_rounding_mode():
+    Money.set_rounding_mode(ROUND_DOWN)
+    assert Money(5.345, 'USD').amount == Decimal('5.34')
+    Money.set_rounding_mode(ROUND_HALF_UP)
+    assert Money(5.346, 'USD').amount == Decimal('5.35')
+
+
 def test_str():
     assert str(Money(8, 'USD')) == '$8.00'
     assert str(Money(8, 'JPY')) == '¥8'
+
+
+def test_eq():
+    assert Money(8, 'USD') == Money(8, 'USD')
+    assert Money(8, 'USD') == 8
+
+
+def test_ne():
+    assert Money(8, 'USD') != Money(8, 'EUR')
+    assert Money(8, 'USD') != 10
 
 
 def test_lt():
@@ -67,16 +86,6 @@ def test_le():
 
     assert Money(8, 'USD') <= Money(16, 'EUR')
     assert not Money(8, 'USD') <= Money(10, 'EUR')
-
-
-def test_eq():
-    assert Money(8, 'USD') == Money(8, 'USD')
-    assert not Money(8, 'USD') == Money(10, 'USD')
-
-
-def test_ne():
-    assert Money(8, 'USD') != Money(8, 'EUR')
-    assert Money(8, 'USD') != Money(10, 'USD')
 
 
 def test_ge():
@@ -178,3 +187,13 @@ def test_round():
     assert round(Money(4, 'EUR')) == Money(4, 'EUR')
     assert round(Money(4.435, 'USD'), 0) == Money(4.0, 'USD')
     assert round(Money(4.435, 'USD'), 1) == Money('4.4', 'USD')
+
+
+def test_floor():
+    assert floor(Money(4, 'USD')) == Money(4, 'USD')
+    assert floor(Money(4.435, 'EUR')) == Money(4, 'EUR')
+
+
+def test_ceil():
+    assert ceil(Money(4, 'USD')) == Money(4, 'USD')
+    assert ceil(Money(4.435, 'EUR')) == Money(5, 'EUR')

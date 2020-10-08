@@ -36,3 +36,18 @@ def test_locale():
     assert currency.symbol() == '$'
     assert currency.symbol('pt_PT') == 'US$'
     assert currency.symbol('de_DE') == '$'
+
+
+def test_str():
+    assert str(Currency('USD')) == 'USD'
+    assert str(Currency('JPY')) == 'JPY'
+
+
+def test_eq():
+    assert Currency('USD') == Currency('USD')
+    assert Currency('USD') == 'USD'
+
+
+def test_ne():
+    assert Currency('USD') != Currency('JPY')
+    assert Currency('USD') != 'JPY'

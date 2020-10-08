@@ -8,8 +8,8 @@ from money.exchange import SimpleBackend
 
 
 class TestExchange:
-    # noinspection PyMethodMayBeStatic
-    def setup_method(self):
+    @staticmethod
+    def teardown_method():
         xrates.backend = None
 
     def test_set_backend_str(self):
@@ -44,17 +44,28 @@ class TestExchange:
 
         assert xrates.backend is None
 
+    def test_backend_not_set(self):
         with pytest.raises(ExchangeBackendNotSet):
-            xrates.backend_name
+            _ = xrates.backend_name
+
+        with pytest.raises(ExchangeBackendNotSet):
+            xrates.base = 'USD'
+
+        with pytest.raises(ExchangeBackendNotSet):
+            Money('4', 'USD').to('JPY')
 
 
 class TestSimpleBackend:
-    # noinspection PyMethodMayBeStatic
-    def setup_method(self):
+    @classmethod
+    def setup_class(cls):
         xrates.backend = 'money.exchange.SimpleBackend'
         xrates.base = 'USD'
         xrates.setrate('EUR', Decimal(2))
         xrates.setrate('JPY', Decimal(8))
+
+    @classmethod
+    def teardown_class(cls):
+        xrates.backend = None
 
     def test_base(self):
         assert xrates.base == 'USD'
