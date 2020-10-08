@@ -34,7 +34,6 @@ def _make_arithmetic_operator(name):
     return operator_func
 
 
-# noinspection PyMethodOverriding
 class Money(Decimal):
     """Class representing a monetary amount."""
 
