@@ -1,5 +1,6 @@
 # money-lib
 
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/r4g3baby/money-lib/Test)
 ![PyPI - Version](https://img.shields.io/pypi/v/money-lib.svg)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/money-lib.svg)
 ![PyPI - License](https://img.shields.io/pypi/l/money-lib.svg)
@@ -103,10 +104,11 @@ Model fields usage:
 
 ```python
 >>> from django.db import models
->>> from money import fields, Money
+>>> from money import Money
+>>> from money.django.fields import MoneyField
 
 >>> class Product(models.Model):
-...     price = fields.MoneyField(max_digits=19, decimal_places=4, default=Money('10', 'USD'))
+...     price = MoneyField(max_digits=19, decimal_places=4, default=Money('10', 'USD'))
 ```
 
 Model queries usage:
@@ -124,8 +126,8 @@ Money(Decimal('10.0000'), 'USD')
 
 ## Credits
 
-Currency exchange support based on https://github.com/carlospalol/money.
+Currency exchange support based on [carlospalol/money](https://github.com/carlospalol/money/blob/master/money/exchange.py).
 
-Django model multiple database columns by [miracle2k](https://blog.elsdoerfer.name/2008/01/08/fuzzydates-or-one-django-model-field-multiple-database-columns/).
+Django model field with multiple database columns by [miracle2k](https://blog.elsdoerfer.name/2008/01/08/fuzzydates-or-one-django-model-field-multiple-database-columns/).
 
-Currency data and formatting is powered by [Babel](http://babel.pocoo.org).
+Currency data and formatting is powered by [Babel](https://github.com/python-babel/babel).
