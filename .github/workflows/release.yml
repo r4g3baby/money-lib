@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+
+    - name: Cache pip
+      uses: actions/cache@v2
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: ${{ runner.os }}-pip-
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+
+    - name: Generate Changelog
+      id: generate_changelog
+      run: |
+        git fetch --unshallow --tags
+        tag=$(git tag --sort version:refname | tail -n 2 | head -n 1)
+        if [ "$tag" ]; then
+        changelog=$(git log --oneline --no-decorate $tag..HEAD)
+        else
+        changelog=$(git log --oneline --no-decorate)
+        fi
+        changelog="${changelog//'%'/'%25'}"
+        changelog="${changelog//$'\n'/'%0A' - }"
+        changelog=" - ${changelog//$'\r'/'%0D'}"
+        echo "::set-output name=changelog::$changelog"
+
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        body: |
+          ${{ steps.generate_changelog.outputs.changelog }}
+        draft: false
+
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
