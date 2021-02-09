@@ -4,6 +4,7 @@
 ![PyPI - Version](https://img.shields.io/pypi/v/money-lib.svg)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/money-lib.svg)
 ![PyPI - License](https://img.shields.io/pypi/l/money-lib.svg)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr4g3baby%2Fmoney-lib.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fr4g3baby%2Fmoney-lib?ref=badge_shield)
 
 Python 3 money lib with decimal precision and currency exchange support.
 
@@ -131,3 +132,6 @@ Currency exchange support based on [carlospalol/money](https://github.com/carlos
 Django model field with multiple database columns by [miracle2k](https://blog.elsdoerfer.name/2008/01/08/fuzzydates-or-one-django-model-field-multiple-database-columns/).
 
 Currency data and formatting is powered by [Babel](https://github.com/python-babel/babel).
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fr4g3baby%2Fmoney-lib.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fr4g3baby%2Fmoney-lib?ref=badge_large)
