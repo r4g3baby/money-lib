@@ -1,4 +1,4 @@
 Babel==2.8.0
-Django==2.2.22
+Django==2.2.24
 flake8==3.8.4
 pytest==6.1.1
