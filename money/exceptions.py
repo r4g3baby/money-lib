@@ -9,8 +9,8 @@ class CurrencyException(MoneyException):
 class InvalidCurrencyFormat(CurrencyException, ValueError):
     def __init__(self, currency):
         msg = (
-            'Currency not in ISO 4217 format: \'{}\'.'
-        ).format(currency)
+            f"Currency not in ISO 4217 format: '{currency}'."
+        )
         super().__init__(msg)
 
 
@@ -38,6 +38,6 @@ class ExchangeBackendNotSet(ExchangeError):
 class ExchangeRateNotFound(ExchangeError):
     def __init__(self, backend, origin, target):
         msg = (
-            'Rate not found in backend \'{}\': {}/{}.'
-        ).format(backend, origin, target)
+            f"Rate not found in backend '{backend}': {origin}/{target}."
+        )
         super().__init__(msg)

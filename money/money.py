@@ -65,7 +65,7 @@ class Money(Decimal):
         return self._currency
 
     def __repr__(self):
-        return 'Money({}, \'{}\')'.format(super().__repr__(), self._currency)
+        return f"Money({super().__repr__()}, {self._currency!r})"
 
     def __str__(self):
         return self.format()

@@ -51,7 +51,7 @@ class Currency:
         return get_currency_symbol(self._code, locale=locale)
 
     def __repr__(self):
-        return 'Currency(\'{}\')'.format(self._code)
+        return f"Currency({self._code!r})"
 
     def __str__(self):
         return self._code

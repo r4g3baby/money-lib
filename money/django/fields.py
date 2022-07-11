@@ -7,7 +7,7 @@ from money import Currency, Money
 from money.django import forms
 
 
-def _currency_field_name(name): return '{}_currency'.format(name)
+def _currency_field_name(name): return f"{name}_currency"
 
 
 class MoneyFieldProxy(object):
