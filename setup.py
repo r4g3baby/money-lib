@@ -21,7 +21,7 @@ setup(
     packages=find_packages(exclude=['tests*']),
     install_requires=['Babel>=2.5.0'],
     extras_require={
-        'Django': ['Django>=2.2']
+        'Django': ['Django>=3.2']
     },
     python_requires='>=3',
     classifiers=[
