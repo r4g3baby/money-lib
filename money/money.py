@@ -64,6 +64,10 @@ class Money(Decimal):
 
         return self._currency
 
+    def __composite_values__(self):
+        # https://docs.sqlalchemy.org/en/14/orm/composites.html
+        return Decimal(self), str(self._currency)
+
     def __repr__(self):
         return f"Money({super().__repr__()}, {self._currency!r})"
 
