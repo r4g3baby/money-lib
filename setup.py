@@ -12,7 +12,7 @@ setup(
     name='money-lib',
     version=version,
     author='Rui Pereira',
-    author_email='r4g3baby@gmail.com',
+    author_email='me@ruipereira.dev',
     license='MIT',
     description='Python 3 money lib with decimal precision and currency exchange support.',
     long_description=long_description,
