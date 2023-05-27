@@ -34,6 +34,15 @@ def _make_arithmetic_operator(name):
     return operator_func
 
 
+def _make_class_operator(name):
+    method = getattr(Decimal, name, None)
+
+    def operator_func(self, *args):
+        return self.__class__(method(self, *args), self._currency)
+
+    return operator_func
+
+
 class Money(Decimal):
     """Class representing a monetary amount."""
 
@@ -84,8 +93,7 @@ class Money(Decimal):
 
         if isinstance(other, Money):
             return result and other._currency == self._currency
-        else:
-            return result
+        return result
 
     def __ne__(self, other):
         return not self == other
@@ -114,23 +122,12 @@ class Money(Decimal):
     __pow__ = _make_arithmetic_operator('__pow__')
     __rpow__ = _make_arithmetic_operator('__rpow__')
 
-    def __neg__(self):
-        return self.__class__(super().__neg__(), self._currency)
-
-    def __pos__(self):
-        return self.__class__(super().__pos__(), self._currency)
-
-    def __abs__(self):
-        return self.__class__(super().__abs__(), self._currency)
-
-    def __round__(self, n=0):
-        return self.__class__(super().__round__(n), self._currency)
-
-    def __floor__(self):
-        return self.__class__(super().__floor__(), self._currency)
-
-    def __ceil__(self):
-        return self.__class__(super().__ceil__(), self._currency)
+    __neg__ = _make_class_operator('__neg__')
+    __pos__ = _make_class_operator('__pos__')
+    __abs__ = _make_class_operator('__abs__')
+    __round__ = _make_class_operator('__round__')
+    __floor__ = _make_class_operator('__floor__')
+    __ceil__ = _make_class_operator('__ceil__')
 
     def to(self, currency):
         """Returns the equivalent money object in another currency."""
@@ -153,7 +150,7 @@ class Money(Decimal):
     def format(self, locale='en_US'):
         """Returns a string of the currency formatted for the specified locale."""
 
-        return format_currency(self, self.currency.code, locale=locale).replace(u'\xa0', u' ')
+        return format_currency(self, self.currency.code, locale=locale).replace('\xa0', ' ')
 
     @classmethod
     def set_rounding_mode(cls, mode):

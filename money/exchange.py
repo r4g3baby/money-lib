@@ -94,7 +94,7 @@ class ExchangeRates:
         return getattr(self._backend, item)
 
     def __setattr__(self, key, value):
-        if key == '_backend' or key == 'backend':
+        if key in ('_backend', 'backend'):
             return super().__setattr__(key, value)
         if self._backend is None:
             raise ExchangeBackendNotSet()

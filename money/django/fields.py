@@ -10,7 +10,7 @@ from money.django import forms
 def _currency_field_name(name): return f"{name}_currency"
 
 
-class MoneyFieldProxy(object):
+class MoneyFieldProxy:
     def __init__(self, field):
         self.field = field
         self.currency_name = _currency_field_name(self.field.name)
@@ -29,8 +29,7 @@ class MoneyFieldProxy(object):
         amount = obj.__dict__[self.field.name]
         if amount is None:
             return None
-        else:
-            return Money(amount, getattr(obj, self.currency_name))
+        return Money(amount, getattr(obj, self.currency_name))
 
 
 class CurrencyField(models.CharField):
