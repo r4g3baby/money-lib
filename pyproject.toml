@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "money-lib"
+authors = [
+    { name = "Rui Pereira", email = "me@ruipereira.dev" },
+]
+license = { text = "MIT" }
+description = "Python 3 money lib with decimal precision and currency exchange support."
+dependencies = ["Babel >= 2.5.0"]
+requires-python = ">=3.7"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11"
+]
+dynamic = ["version", "readme"]
+
+[project.optional-dependencies]
+Django = ["Django>=3.2"]
+
+[project.urls]
+"Homepage" = "https://github.com/r4g3baby/money-lib"
+"Bug Tracker" = "https://github.com/r4g3baby/money-lib/issues"
+
+[tool.setuptools.packages.find]
+include = ["money*"]
+
+[tool.setuptools.dynamic]
+version = { attr = "money.__version__" }
+readme = { file = ["README.md"], content-type = "text/markdown" }
