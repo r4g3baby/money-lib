@@ -98,7 +98,8 @@ class Money(Decimal):
     def __ne__(self, other):
         return not self == other
 
-    __hash__ = Decimal.__hash__
+    def __hash__(self):
+        return hash((Decimal(self), self._currency.code))
 
     __lt__ = _make_comparison_operator('__lt__')
     __le__ = _make_comparison_operator('__le__')
