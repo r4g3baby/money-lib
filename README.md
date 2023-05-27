@@ -1,10 +1,10 @@
 # money-lib
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/r4g3baby/money-lib/test.yml?branch=main)
-![PyPI - Version](https://img.shields.io/pypi/v/money-lib.svg)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/money-lib.svg)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/money-lib)
-![PyPI - License](https://img.shields.io/pypi/l/money-lib.svg)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/r4g3baby/money-lib/test.yml?branch=main)](https://github.com/r4g3baby/money-lib/actions)
+[![PyPI - Version](https://img.shields.io/pypi/v/money-lib.svg)](https://pypi.org/project/money-lib/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/money-lib.svg)](https://pypi.org/project/money-lib/)
+[![PyPI - Downloads](https://img.shields.io/pypi/dm/money-lib)](https://pypi.org/project/money-lib/)
+[![PyPI - License](https://img.shields.io/pypi/l/money-lib.svg)](https://pypi.org/project/money-lib/)
 
 Python 3 money lib with decimal precision and currency exchange support.
 
