@@ -38,14 +38,26 @@ def test_locale():
     assert currency.symbol('de_DE') == '$'
 
 
+def test_repr():
+    assert repr(Currency('USD')) == 'Currency(\'USD\')'
+    assert repr(Currency('JPY')) == 'Currency(\'JPY\')'
+
+
 def test_str():
     assert str(Currency('USD')) == 'USD'
     assert str(Currency('JPY')) == 'JPY'
 
 
+def test_reduce():
+    assert Currency('USD').__reduce__() == (Currency, ('USD',))
+    assert Currency('JPY').__reduce__() == (Currency, ('JPY',))
+
+
 def test_eq():
     assert Currency('USD') == Currency('USD')
     assert Currency('USD') == 'USD'
+
+    assert not Currency('USD') == 10
 
 
 def test_ne():

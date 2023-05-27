@@ -1,10 +1,9 @@
-from _decimal import ROUND_DOWN, ROUND_HALF_UP
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal, InvalidOperation, ROUND_DOWN, ROUND_HALF_UP
 from math import ceil, floor
 
 import pytest
 
-from money import Money, xrates
+from money import Currency, Money, xrates
 from money.exceptions import InvalidCurrencyFormat
 
 
@@ -48,6 +47,8 @@ def test_format():
     assert Money(5.364, 'USD').format() == '$5.36'
     assert Money(7.452, 'JPY').format() == '¥7'
     assert Money(9.345, 'JPY').format('ja_JP') == '￥9'
+    assert Money(7.814, 'JPY').format('pt_PT') == '8 JP¥'
+    assert Money(4.968, 'EUR').format('de_DE') == '4,97 €'
 
 
 def test_rounding_mode():
@@ -57,19 +58,43 @@ def test_rounding_mode():
     assert Money(5.346, 'USD').amount == Decimal('5.35')
 
 
+def test_composites():
+    assert Money(8, 'USD').__composite_values__() == (Decimal(8), 'USD')
+    assert Money('8.134', 'JPY').__composite_values__() == (Decimal('8.134'), 'JPY')
+    assert Money(8.134, 'EUR').__composite_values__() == (Decimal(8.134), 'EUR')
+
+
+def test_repr():
+    assert repr(Money(8, 'USD')) == 'Money(Decimal(\'8\'), Currency(\'USD\'))'
+    assert repr(Money('8.134', 'JPY')) == 'Money(Decimal(\'8.134\'), Currency(\'JPY\'))'
+
+
 def test_str():
     assert str(Money(8, 'USD')) == '$8.00'
     assert str(Money(8, 'JPY')) == '¥8'
+    assert str(Money(4.13, 'EUR')) == '€4.13'
+
+
+def test_reduce():
+    assert Money(8, 'USD').__reduce__() == (Money, ('8', Currency('USD')))
+    assert Money('8.134', 'JPY').__reduce__() == (Money, ('8.134', Currency('JPY')))
 
 
 def test_eq():
     assert Money(8, 'USD') == Money(8, 'USD')
     assert Money(8, 'USD') == 8
 
+    assert not Money(8, 'USD') == 'USD'
+
 
 def test_ne():
     assert Money(8, 'USD') != Money(8, 'EUR')
     assert Money(8, 'USD') != 10
+
+
+def test_hash():
+    assert hash(Money(8, 'EUR')) == hash(Money('8', 'EUR'))
+    assert not hash(Money(8, 'EUR')) == hash(Money('8', 'USD'))
 
 
 def test_lt():
@@ -102,6 +127,11 @@ def test_gt():
 
     assert Money(8, 'USD') > Money(10, 'EUR')
     assert not Money(8, 'USD') > Money(20, 'EUR')
+
+
+def test_arithmetic_error():
+    with pytest.raises(TypeError):
+        Money(4, 'USD') + ''
 
 
 def test_add():
@@ -186,7 +216,7 @@ def test_round():
     assert round(Money(4, 'USD')) == Money(4, 'USD')
     assert round(Money(4, 'EUR')) == Money(4, 'EUR')
     assert round(Money(4.435, 'USD'), 0) == Money(4.0, 'USD')
-    assert round(Money(4.435, 'USD'), 1) == Money('4.4', 'USD')
+    assert round(Money(4.435, 'USD'), 2) == Money('4.43', 'USD')
 
 
 def test_floor():
