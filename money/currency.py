@@ -22,6 +22,8 @@ class Currency:
         If the given currency_code isn't a valid ISO 4217 format
     """
 
+    __slots__ = ('_code',)
+
     def __init__(self, currency_code):
         if not CURRENCY_REGEX.match(currency_code):
             raise InvalidCurrencyFormat(currency_code)
