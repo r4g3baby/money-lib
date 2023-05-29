@@ -26,7 +26,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      - name: Install dependencies
+      - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip setuptools
           pip install wheel build twine
@@ -44,7 +44,17 @@ jobs:
           changelog="${changelog//'%'/'%25'}"
           changelog="${changelog//$'\n'/'%0A' - }"
           changelog=" - ${changelog//$'\r'/'%0D'}"
-          echo "CHANGELOG=$changelog" >> "$GITHUB_OUTPUT"
+          echo "CHANGELOG<<$EOF" >> "$GITHUB_OUTPUT"
+          echo "$changelog" >> "$GITHUB_OUTPUT"
+          echo "$EOF" >> "$GITHUB_OUTPUT"
+
+      - name: Build and Publish
+        env:
+          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+        run: |
+          python -m build
+          twine upload dist/*
 
       - name: Create Draft Release
         uses: softprops/action-gh-release@v1
@@ -53,12 +63,5 @@ jobs:
         with:
           body: |
             ${{ steps.generate_changelog.outputs.CHANGELOG }}
+          files: dist/*
           draft: true
-
-      - name: Build and publish
-        env:
-          TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
-        run: |
-          python -m build
-          twine upload dist/*
